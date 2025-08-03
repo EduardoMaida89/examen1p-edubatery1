@@ -11,4 +11,8 @@ class Producto extends Model
         'precio',
         'marca_id'
 ];
+public function marca()
+    {
+        return $this->belongsTo(Marca::class);
+    }
 }
