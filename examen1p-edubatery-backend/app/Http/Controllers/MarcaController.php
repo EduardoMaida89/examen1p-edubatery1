@@ -29,7 +29,15 @@ class MarcaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+       $resquest->validate([
+            'nombre' => 'required|string|max:255',
+        ]);
+
+        $marca = Marca::create($request->all());
+        return response()->json([
+            'mensaje' => 'Marca creada exitosamente',
+            'marca' => $marca,
+],201);
     }
 
     /**
