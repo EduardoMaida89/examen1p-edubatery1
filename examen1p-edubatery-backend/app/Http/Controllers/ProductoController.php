@@ -30,7 +30,19 @@ class ProductoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+       $validator = Validator::make($request->all(), [
+            'nombre' => 'required|string|max:255',
+            'precio' => 'required|numeric',
+            'marca_id' => 'required|exists:marcas,id',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $producto = Producto::create($request->all());
+        return response()->json( [
+            'mensaje' => 'Producto creado exitosamente',
+            'producto' => $producto,
+        ],201);
     }
 
     /**
@@ -38,7 +50,16 @@ class ProductoController extends Controller
      */
     public function show(string $id)
     {
-        //
+         $producto = Producto::find($id);
+        if (!$producto) {
+            return response()->json([
+                'mensaje' => 'Producto no encontrado',
+            ],404);
+        }
+        return response()->json([
+            'mensaje' => 'Producto obtenido exitosamente',
+            'producto' => $producto,
+        ],200);
     }
 
     /**
