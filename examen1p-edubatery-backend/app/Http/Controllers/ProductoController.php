@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Producto;
+use Illuminate\Support\Facades\Validator;
 
 class ProductoController extends Controller
 {
@@ -67,7 +68,22 @@ class ProductoController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+         $request->validate([
+            'nombre' => 'required|string|max:255',
+            'precio' => 'required|numeric',
+            'marca_id' => 'required|exists:marcas,id',
+        ]);
+        $producto = Producto::find($id);
+        if (!$producto) {
+            return response()->json([
+                'mensaje' => 'Producto no encontrado',
+            ], 404);
+        }
+        $producto->update($request->all());
+        return response()->json([
+            'mensaje' => 'Producto actualizado exitosamente',
+            'producto' => $producto,
+        ],200);
     }
 
     /**
@@ -75,6 +91,15 @@ class ProductoController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+         $producto = Producto::find($id);
+        if (!$producto) {
+            return response()->json([
+                'mensaje' => 'Producto no encontrado',
+            ], 404);
+        }
+        $producto->delete();
+        return response()->json([
+            'mensaje' => 'Producto eliminado de manera exitosa',
+        ],200);
     }
 }
