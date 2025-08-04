@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Models\Marca;
+use Illuminate\Support\Facades\Validator;
 class MarcaController extends Controller
 {
     /**
@@ -28,16 +29,18 @@ class MarcaController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-       $resquest->validate([
-            'nombre' => 'required|string|max:255',
+    {  
+       $validator = Validator::make($request->all(), [
+            'nombre' => 'required|string|max:255|unique:marcas,nombre',
         ]);
-
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
         $marca = Marca::create($request->all());
-        return response()->json([
+        return response()->json( [
             'mensaje' => 'Marca creada exitosamente',
             'marca' => $marca,
-],201);
+        ],201);
     }
 
     /**
