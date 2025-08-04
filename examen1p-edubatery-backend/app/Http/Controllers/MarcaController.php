@@ -45,7 +45,16 @@ class MarcaController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $marca = Marca::find($id);
+        if (!$marca) {
+            return response()->json([
+                'mensaje' => 'Marca no encontrada',
+            ],404);
+        }
+        return response()->json([
+            'mensaje' => 'Marca obtenida exitosamente',
+            'marca' => $marca,
+        ],200);
     }
 
     /**
@@ -53,7 +62,20 @@ class MarcaController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'nombre' => 'required|string|max:255|unique:marcas,nombre,' . $id,
+        ]);
+        $marca = Marca::find($id);
+        if (!$marca) {
+            return response()->json([
+                'mensaje' => 'Marca no encontrada',
+            ], 404);
+        }
+        $marca->update($request->all());
+        return response()->json([
+            'mensaje' => 'Marca actualizada exitosamente',
+            'marca' => $marca,
+        ],200);
     }
 
     /**
@@ -61,6 +83,15 @@ class MarcaController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $marca = Marca::find($id);
+        if (!$marca) {
+            return response()->json([
+                'mensaje' => 'Marca no encontrada',
+            ], 404);
+        }
+        $marca->delete();
+        return response()->json([
+            'mensaje' => 'Marca eliminada de manera exitosa',
+        ],200);
     }
 }
